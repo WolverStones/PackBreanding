@@ -34,7 +34,7 @@ public class MenuConfig {
         }
 
         instance = new MenuConfig();
-        Path configDir = FabricLoader.getInstance().getConfigDir().resolve(CONFIG_FOLDER);
+        Path configDir = getConfigDir();
         Path configFile = configDir.resolve(CONFIG_FILE);
 
         try {
@@ -82,7 +82,12 @@ public class MenuConfig {
 
                         # --- Custom Window Icon ---
                         # Enable custom window icon (true/false)
-                        # Place your icon at: config/packbranding/icon.png
+                        # Place your icons at:
+                        #   config/packbranding/icon/icon_16x16.png (16x16 - title bar)
+                        #   config/packbranding/icon/icon_32x32.png (32x32 - taskbar)
+                        # Both icon files are required when using split icons
+                        # Or a single icon:
+                        #   config/packbranding/icon.png (square PNG, e.g. 256x256)
                         enableCustomIcon=false
                         """;
                 Files.writeString(configFile, defaultConfig);
@@ -145,8 +150,24 @@ public class MenuConfig {
         return enableCustomIcon;
     }
 
-    public static Path getIconPath() {
-        return FabricLoader.getInstance().getConfigDir().resolve(CONFIG_FOLDER).resolve("icon.png");
+    public static Path getConfigDir() {
+        return FabricLoader.getInstance().getConfigDir().resolve(CONFIG_FOLDER);
+    }
+
+    public static Path getIconDir() {
+        return getConfigDir().resolve("icon");
+    }
+
+    public static Path getIcon16Path() {
+        return getConfigDir().resolve("icon_16x16.png");
+    }
+
+    public static Path getIcon32Path() {
+        return getConfigDir().resolve("icon_32x32.png");
+    }
+
+    public static Path getIconSinglePath() {
+        return getConfigDir().resolve("icon.png");
     }
 
     private static int parseColor(String hex) {

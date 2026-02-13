@@ -56,7 +56,8 @@ customTextPauseMenu=#FF5555MyPack #FFFFFFv{packversion}
 hideRealmsButton=true
 
 # Enable custom window icon
-# Place your icon at: config/packbranding/icon.png
+# Place your icons at: config/packbranding/icon/icon_16x16.png and icon_32x32.png
+# Or a single icon at: config/packbranding/icon.png
 enableCustomIcon=false
 ```
 
@@ -111,8 +112,10 @@ customTextMainMenu=&cMyPack &f{packversion} &7| &aMC {mcversion}
 ## Custom Icon
 
 1. Set `enableCustomIcon=true` in menu.properties
-2. Place your icon at `config/packbranding/icon.png`
-3. Recommended size: 256x256 pixels (PNG format)
+2. Place either:
+   - `config/packbranding/icon/icon_16x16.png` and `config/packbranding/icon/icon_32x32.png`
+   - or a single `config/packbranding/icon.png`
+3. Use PNG format with transparency; for single icon, 256x256 is a good default
 
 ## Requirements
 

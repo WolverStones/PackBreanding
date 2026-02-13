@@ -39,7 +39,9 @@ customTextPauseMenu=#FF5555MyPack #FFFFFF{packversion}
 hideRealmsButton=true
 
 # Enable custom window icon (true/false)
-# Icon must be at: config/packbranding/icon.png
+# Icons can be at: config/packbranding/icon/icon_16x16.png and icon_32x32.png
+# Both icon files are required when using split icons
+# Or a single icon at: config/packbranding/icon.png
 enableCustomIcon=false
 ```
 

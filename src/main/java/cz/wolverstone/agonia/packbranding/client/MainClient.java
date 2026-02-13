@@ -5,9 +5,6 @@ import net.minecraft.client.MinecraftClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 public class MainClient implements ClientModInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger("PackBranding");
 
@@ -24,12 +21,7 @@ public class MainClient implements ClientModInitializer {
             }
 
             if (menuConfig.isEnableCustomIcon()) {
-                Path iconPath = MenuConfig.getIconPath();
-                if (Files.exists(iconPath)) {
-                    IconChanger.setIcon(iconPath);
-                } else {
-                    LOGGER.warn("Custom icon enabled but file not found: {}", iconPath);
-                }
+                IconChanger.applyConfiguredIcon();
             }
         });
 
