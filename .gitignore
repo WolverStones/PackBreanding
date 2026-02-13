@@ -25,4 +25,5 @@ desktop.ini
 # Java
 *.class
 *.jar
+!gradle/wrapper/gradle-wrapper.jar
 *.log
