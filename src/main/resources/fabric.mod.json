@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "packbranding",
+  "version": "${version}",
+  "name": "PackBranding",
+  "description": "Customize window title, menu text, colors and hide Realms button. Perfect for modpack creators.",
+  "authors": ["Wolverstone"],
+  "contact": {
+    "homepage": "https://modrinth.com/mod/packbranding",
+    "sources": "https://github.com/agonia/packbranding",
+    "issues": "https://github.com/agonia/packbranding/issues"
+  },
+  "license": "MIT",
+  "icon": "assets/packbranding/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "cz.wolverstone.agonia.packbranding.client.MainClient"
+    ]
+  },
+  "mixins": [
+    "packbranding.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}

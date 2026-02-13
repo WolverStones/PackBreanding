@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "cz.wolverstone.agonia.packbranding.mixin.client",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "DisableVanillaTitleMixin",
+    "TitleScreenMixin",
+    "GameMenuScreenMixin",
+    "HideRealmsButtonMixin",
+    "RealmsNotificationMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}
