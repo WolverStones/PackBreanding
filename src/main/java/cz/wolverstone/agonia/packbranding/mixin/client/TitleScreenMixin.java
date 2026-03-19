@@ -1,5 +1,6 @@
 package cz.wolverstone.agonia.packbranding.mixin.client;
 
+import cz.wolverstone.agonia.packbranding.client.IconChanger;
 import cz.wolverstone.agonia.packbranding.client.MenuConfig;
 import cz.wolverstone.agonia.packbranding.client.TextParser;
 import net.minecraft.client.gui.screen.Screen;
@@ -22,6 +23,10 @@ public abstract class TitleScreenMixin extends Screen {
     private void onInit(CallbackInfo ci) {
         MenuConfig config = MenuConfig.getInstance();
         if (config == null) return;
+
+        if (config.isEnableCustomIcon()) {
+            IconChanger.applyConfiguredIcon();
+        }
 
         if (!config.isEnableMainMenuText()) return;
 

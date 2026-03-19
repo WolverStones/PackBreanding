@@ -21,8 +21,12 @@ public class IconChanger {
     private static final Logger LOGGER = LoggerFactory.getLogger("PackBranding");
     private static final int ICON_16 = 16;
     private static final int ICON_32 = 32;
+    private static boolean applied = false;
 
     public static void applyConfiguredIcon() {
+        if (applied) return;
+        applied = true;
+
         Path iconDir = MenuConfig.getIconDir();
         try {
             Files.createDirectories(iconDir);

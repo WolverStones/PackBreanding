@@ -19,10 +19,6 @@ public class MainClient implements ClientModInitializer {
             if (menuConfig.isEnableCustomTitle()) {
                 WindowTitleChanger.applyTitle(titleConfig);
             }
-
-            if (menuConfig.isEnableCustomIcon()) {
-                IconChanger.applyConfiguredIcon();
-            }
         });
 
         LOGGER.info("PackBranding initialized!");
