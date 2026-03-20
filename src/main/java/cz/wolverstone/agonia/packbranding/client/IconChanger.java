@@ -23,6 +23,11 @@ public class IconChanger {
     private static final int ICON_32 = 32;
     private static boolean applied = false;
 
+    public static void resetAndApply() {
+        applied = false;
+        applyConfiguredIcon();
+    }
+
     public static void applyConfiguredIcon() {
         if (applied) return;
         applied = true;
