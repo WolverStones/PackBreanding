@@ -1,9 +1,9 @@
 package cz.wolverstone.agonia.packbranding.mixin.client;
 
 import cz.wolverstone.agonia.packbranding.client.MenuConfig;
-import net.minecraft.client.gui.screen.TitleScreen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -23,11 +23,11 @@ public class HideRealmsButtonMixin {
         TitleScreen screen = (TitleScreen) (Object) this;
 
         screen.children().forEach(child -> {
-            if (child instanceof ButtonWidget button) {
-                Text message = button.getMessage();
+            if (child instanceof Button button) {
+                Component message = button.getMessage();
                 if (message != null) {
                     String key = message.getString();
-                    if (key.equals(Text.translatable(REALMS_KEY).getString())) {
+                    if (key.equals(Component.translatable(REALMS_KEY).getString())) {
                         button.visible = false;
                         button.active = false;
                     }
