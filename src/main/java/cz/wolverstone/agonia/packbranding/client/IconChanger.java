@@ -1,7 +1,7 @@
 package cz.wolverstone.agonia.packbranding.client;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.texture.NativeImage;
+import net.minecraft.client.Minecraft;
+import com.mojang.blaze3d.platform.NativeImage;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.system.MemoryStack;
@@ -97,7 +97,7 @@ public class IconChanger {
 
                     ByteBuffer buffer = MemoryUtil.memAlloc(nativeImage.getWidth() * nativeImage.getHeight() * 4);
                     loadedImages.add(buffer);
-                    buffer.asIntBuffer().put(nativeImage.copyPixelsAbgr());
+                    buffer.asIntBuffer().put(nativeImage.getPixelsABGR());
                     glfwImages.position(i);
                     glfwImages.width(nativeImage.getWidth());
                     glfwImages.height(nativeImage.getHeight());
@@ -105,7 +105,7 @@ public class IconChanger {
                 }
             }
 
-            GLFW.glfwSetWindowIcon(MinecraftClient.getInstance().getWindow().getHandle(), glfwImages);
+            GLFW.glfwSetWindowIcon(Minecraft.getInstance().getWindow().handle(), glfwImages);
         } finally {
             loadedImages.forEach(MemoryUtil::memFree);
         }

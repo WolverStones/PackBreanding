@@ -2,7 +2,7 @@ package cz.wolverstone.agonia.packbranding.client;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +16,7 @@ public class WindowTitleChanger {
 
     public static void applyTitle(WindowTitleConfig config) {
         String parsedTitle = parseTitle(config.getTitle());
-        MinecraftClient.getInstance().getWindow().setTitle(parsedTitle);
+        Minecraft.getInstance().getWindow().setTitle(parsedTitle);
         LOGGER.info("Window title set to: {}", parsedTitle);
     }
 
@@ -43,7 +43,7 @@ public class WindowTitleChanger {
         return switch (token) {
             case "mcversion" -> getMinecraftVersion();
             case "packversion" -> MenuConfig.getInstance().getPackVersion();
-            case "username" -> MinecraftClient.getInstance().getSession().getUsername();
+            case "username" -> Minecraft.getInstance().getUser().getName();
             case "modversion" -> {
                 if (arg == null || arg.isEmpty()) {
                     yield null;
