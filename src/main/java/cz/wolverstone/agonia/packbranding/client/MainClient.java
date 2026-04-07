@@ -1,12 +1,12 @@
 package cz.wolverstone.agonia.packbranding.client;
 
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourceType;
-import net.minecraft.util.Identifier;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.fabricmc.fabric.api.resource.v1.reloader.SimpleReloadListener;
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +20,7 @@ public class MainClient implements ClientModInitializer {
         WindowTitleConfig titleConfig = WindowTitleConfig.load();
         MenuConfig menuConfig = MenuConfig.load();
 
-        MinecraftClient.getInstance().execute(() -> {
+        Minecraft.getInstance().execute(() -> {
             if (menuConfig.isEnableCustomTitle()) {
                 WindowTitleChanger.applyTitle(titleConfig);
             }
@@ -30,15 +30,16 @@ public class MainClient implements ClientModInitializer {
         });
 
         if (menuConfig.isEnableCustomIcon()) {
-            ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(
-                new SimpleSynchronousResourceReloadListener() {
+            ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(
+                Identifier.fromNamespaceAndPath("packbranding", "icon_reload"),
+                new SimpleReloadListener<Void>() {
                     @Override
-                    public Identifier getFabricId() {
-                        return Identifier.of("packbranding", "icon_reload");
+                    protected Void prepare(PreparableReloadListener.SharedState state) {
+                        return null;
                     }
 
                     @Override
-                    public void reload(ResourceManager manager) {
+                    protected void apply(Void result, PreparableReloadListener.SharedState state) {
                         IconChanger.resetAndApply();
                     }
                 }
