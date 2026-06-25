@@ -4,6 +4,8 @@
 
 Everything is optional and configurable, so you only change what you want.
 
+> ⚠️ **Versions older than 1.2.0 are no longer supported.** Please update to the latest release.
+
 ---
 
 ## ✨ What it can do
