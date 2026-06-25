@@ -88,13 +88,30 @@ public final class ScreenBrandingHandler {
             return;
         }
 
-        // Find the vanilla icon row.
+        // Find the vanilla icon row. Anchor on the vanilla SpriteIconButtons
+        // (language / accessibility), then pull in *every* 20x20 widget sitting on
+        // that same row -- including icons added by other mods (e.g. ukulib's
+        // config button). If we re-centered only the vanilla icons, a foreign icon
+        // would be left at its old position and stick out of the row.
         List<AbstractWidget> row = new ArrayList<>();
+        Integer rowY = null;
         for (AbstractWidget widget : Screens.getWidgets(screen)) {
             if (widget instanceof SpriteIconButton icon
                     && icon.getWidth() == IconLinkButton.SIZE
                     && icon.getHeight() == IconLinkButton.SIZE) {
                 row.add(icon);
+                rowY = icon.getY();
+            }
+        }
+        if (rowY != null) {
+            final int y0 = rowY;
+            for (AbstractWidget widget : Screens.getWidgets(screen)) {
+                if (!row.contains(widget)
+                        && widget.getWidth() == IconLinkButton.SIZE
+                        && widget.getHeight() == IconLinkButton.SIZE
+                        && widget.getY() == y0) {
+                    row.add(widget);
+                }
             }
         }
         row.sort(java.util.Comparator.comparingInt(AbstractWidget::getX));

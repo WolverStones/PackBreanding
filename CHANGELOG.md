@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1
+- Fixed the title screen icon row not re-centering around icons added by other mods (e.g. ukulib's config button), which left a foreign icon sticking out of the row.
+- The pause menu icon row now applies our buttons after other mods have added theirs, so the row stays correctly ordered and centered.
+
 ## 1.2.0
 - Updated for Minecraft 26.2.
 - Added custom icon buttons to the pause menu and title screen. Each button has its own icon, link and tooltip, and opens the link via the vanilla confirmation prompt.

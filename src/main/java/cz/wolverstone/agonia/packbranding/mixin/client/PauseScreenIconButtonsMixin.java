@@ -23,8 +23,14 @@ import java.util.Set;
  * capture the local {@code LinearLayout} that vanilla fills with its icon
  * buttons, optionally remove vanilla icons (by translation key, so the row
  * reflows with no gap), and append the configured custom buttons.
+ *
+ * <p>A higher-than-default {@code priority} makes our injector run <em>after</em>
+ * other mods that add icons to the same row (e.g. ukulib's config button, which
+ * uses the default priority of 1000). That way those foreign icons are already
+ * present when we rebuild the row, so our buttons land at consistent positions
+ * and the row re-centers around the final set without overlap.
  */
-@Mixin(PauseScreen.class)
+@Mixin(value = PauseScreen.class, priority = 1500)
 public abstract class PauseScreenIconButtonsMixin {
 
     @Inject(
