@@ -126,4 +126,4 @@ A button can set `"index"` to place it at an exact spot in the icon row (`0` = f
 
 ## License
 
-MIT License - Feel free to include in any modpack!
+Apache License 2.0 - Feel free to include in any modpack!

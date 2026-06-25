@@ -207,4 +207,4 @@ PackBranding is **client-side only** — players don't need it on the server, an
 
 ## 📄 License
 
-MIT — feel free to include it in any modpack.
+Apache 2.0 — feel free to include it in any modpack.
