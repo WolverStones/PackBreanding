@@ -1,17 +1,24 @@
-package cz.wolverstone.agonia.packbranding.client;
+package cz.wolverstone.agonia.packbranding.client.text;
 
+import cz.wolverstone.agonia.packbranding.client.config.MenuConfig;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ComponentParser {
+/**
+ * Parses brand text strings into a {@link Component}, resolving color codes,
+ * formatting codes and {token} placeholders.
+ */
+public final class ComponentParser {
 
     private static final Map<Character, ChatFormatting> COLOR_CODES = new HashMap<>();
 
@@ -39,9 +46,14 @@ public class ComponentParser {
         COLOR_CODES.put('r', ChatFormatting.RESET);
     }
 
-    private static final Pattern HEX_PATTERN = Pattern.compile("#([A-Fa-f0-9]{6})");
     private static final Pattern TOKEN_PATTERN = Pattern.compile("\\{([a-z]+)}");
+    /** Matches a clickable link in the form {@code [label](https://url)}. */
     private static final Pattern LINK_PATTERN = Pattern.compile("\\[([^\\]]+)]\\(([^)]+)\\)");
+    /** Default link color (light blue) when the label has no explicit color. */
+    private static final int LINK_COLOR = 0x55AAFF;
+
+    private ComponentParser() {
+    }
 
     public static Component parse(String input) {
         if (input == null || input.isEmpty()) {
@@ -49,7 +61,73 @@ public class ComponentParser {
         }
 
         input = replaceTokens(input);
-        return parseWithLinks(input);
+        return parseLinks(input);
+    }
+
+    /**
+     * Returns whether the raw text contains at least one valid {@code [label](url)}
+     * link. Used to decide if the text widget needs to be clickable.
+     */
+    public static boolean hasLink(String input) {
+        if (input == null || input.isEmpty()) {
+            return false;
+        }
+        Matcher matcher = LINK_PATTERN.matcher(input);
+        while (matcher.find()) {
+            if (Urls.parse(matcher.group(2).trim()) != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Splits the input into plain segments and {@code [label](url)} link
+     * segments. Plain text is color-parsed normally; link labels are
+     * color-parsed and additionally made clickable (underlined, openable URL).
+     */
+    private static Component parseLinks(String input) {
+        Matcher matcher = LINK_PATTERN.matcher(input);
+        MutableComponent result = Component.empty();
+        int last = 0;
+
+        while (matcher.find()) {
+            if (matcher.start() > last) {
+                result.append(parseColors(input.substring(last, matcher.start())));
+            }
+
+            String label = matcher.group(1);
+            String url = matcher.group(2).trim();
+            result.append(buildLink(label, url));
+
+            last = matcher.end();
+        }
+
+        if (last < input.length()) {
+            result.append(parseColors(input.substring(last)));
+        }
+
+        return result;
+    }
+
+    private static Component buildLink(String label, String url) {
+        URI uri = Urls.parse(url);
+        MutableComponent link = (MutableComponent) parseColors(label);
+
+        if (uri == null) {
+            // Not a valid URL: render the label, but not clickable.
+            return link;
+        }
+
+        ClickEvent click = new ClickEvent.OpenUrl(uri);
+        return link.withStyle(style -> {
+            style = style.withClickEvent(click).withUnderlined(true);
+            // Only apply the default link color if the label set no color itself.
+            if (style.getColor() == null) {
+                style = style.withColor(LINK_COLOR);
+            }
+            return style;
+        });
     }
 
     private static String replaceTokens(String input) {
@@ -82,10 +160,6 @@ public class ComponentParser {
         };
     }
 
-    private static Component parseWithLinks(String input) {
-        return parseColors(input);
-    }
-
     private static Component parseColors(String input) {
         MutableComponent result = Component.empty();
         StringBuilder currentComponent = new StringBuilder();
@@ -110,7 +184,7 @@ public class ComponentParser {
                 }
             }
 
-            if ((c == '&' || c == '\u00A7') && i + 1 < input.length()) {
+            if ((c == '&' || c == '§') && i + 1 < input.length()) {
                 char code = Character.toLowerCase(input.charAt(i + 1));
 
                 if (COLOR_CODES.containsKey(code)) {

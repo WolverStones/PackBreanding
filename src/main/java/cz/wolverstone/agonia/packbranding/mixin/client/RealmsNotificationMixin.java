@@ -1,6 +1,6 @@
 package cz.wolverstone.agonia.packbranding.mixin.client;
 
-import cz.wolverstone.agonia.packbranding.client.MenuConfig;
+import cz.wolverstone.agonia.packbranding.client.config.MenuConfig;
 import com.mojang.realmsclient.gui.screens.RealmsNotificationsScreen;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.spongepowered.asm.mixin.Mixin;

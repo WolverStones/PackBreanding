@@ -1,23 +1,28 @@
-package cz.wolverstone.agonia.packbranding.client;
+package cz.wolverstone.agonia.packbranding.client.window;
 
+import cz.wolverstone.agonia.packbranding.PackBranding;
+import cz.wolverstone.agonia.packbranding.client.config.MenuConfig;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.client.Minecraft;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class WindowTitleChanger {
-    private static final Logger LOGGER = LoggerFactory.getLogger("PackBranding");
+/**
+ * Applies the configured custom window title, resolving {token} placeholders.
+ */
+public final class WindowTitleManager {
     private static final Pattern TOKEN_PATTERN = Pattern.compile("\\{([a-z]+)(?::([^}]+))?}");
 
-    public static void applyTitle(WindowTitleConfig config) {
-        String parsedTitle = parseTitle(config.getTitle());
+    private WindowTitleManager() {
+    }
+
+    public static void applyTitle(MenuConfig config) {
+        String parsedTitle = parseTitle(config.getWindowTitle());
         Minecraft.getInstance().getWindow().setTitle(parsedTitle);
-        LOGGER.info("Window title set to: {}", parsedTitle);
+        PackBranding.LOGGER.info("Window title set to: {}", parsedTitle);
     }
 
     private static String parseTitle(String input) {

@@ -1,13 +1,13 @@
-package cz.wolverstone.agonia.packbranding.client;
+package cz.wolverstone.agonia.packbranding.client.window;
 
+import cz.wolverstone.agonia.packbranding.PackBranding;
+import cz.wolverstone.agonia.packbranding.client.config.MenuConfig;
 import net.minecraft.client.Minecraft;
 import com.mojang.blaze3d.platform.NativeImage;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,11 +17,16 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IconChanger {
-    private static final Logger LOGGER = LoggerFactory.getLogger("PackBranding");
+/**
+ * Applies a custom window icon from the config directory.
+ */
+public final class WindowIconManager {
     private static final int ICON_16 = 16;
     private static final int ICON_32 = 32;
     private static boolean applied = false;
+
+    private WindowIconManager() {
+    }
 
     public static void resetAndApply() {
         applied = false;
@@ -36,7 +41,7 @@ public class IconChanger {
         try {
             Files.createDirectories(iconDir);
         } catch (IOException e) {
-            LOGGER.warn("Failed to create icon directory: {}", iconDir, e);
+            PackBranding.LOGGER.warn("Failed to create icon directory: {}", iconDir, e);
         }
 
         Path icon16 = resolveExisting(iconDir.resolve("icon_16x16.png"), MenuConfig.getIcon16Path());
@@ -54,9 +59,9 @@ public class IconChanger {
         }
 
         if (Files.exists(icon16) || Files.exists(icon32)) {
-            LOGGER.warn("Both icon files are required when using split icons: {} and {}", icon16, icon32);
+            PackBranding.LOGGER.warn("Both icon files are required when using split icons: {} and {}", icon16, icon32);
         } else {
-            LOGGER.warn("Custom icon enabled but no icon files found in {}", MenuConfig.getConfigDir());
+            PackBranding.LOGGER.warn("Custom icon enabled but no icon files found in {}", MenuConfig.getConfigDir());
         }
     }
 
@@ -68,12 +73,12 @@ public class IconChanger {
         try {
             setWindowIcon(sources);
             if (sources.size() == 1) {
-                LOGGER.info("Window icon set from: {}", sources.get(0).path());
+                PackBranding.LOGGER.info("Window icon set from: {}", sources.get(0).path());
             } else {
-                LOGGER.info("Window icon set from: {} and {}", sources.get(0).path(), sources.get(1).path());
+                PackBranding.LOGGER.info("Window icon set from: {} and {}", sources.get(0).path(), sources.get(1).path());
             }
         } catch (Exception e) {
-            LOGGER.error("Failed to set window icon", e);
+            PackBranding.LOGGER.error("Failed to set window icon", e);
         }
     }
 
@@ -90,7 +95,7 @@ public class IconChanger {
                     if (source.expectedSize() != null) {
                         int expected = source.expectedSize();
                         if (nativeImage.getWidth() != expected || nativeImage.getHeight() != expected) {
-                            LOGGER.warn("Custom window icon enabled, but {} is not {}x{}.", source.path(), expected, expected);
+                            PackBranding.LOGGER.warn("Custom window icon enabled, but {} is not {}x{}.", source.path(), expected, expected);
                             return;
                         }
                     }
