@@ -203,8 +203,8 @@ PackBranding is **client-side only** — players don't need it on the server, an
 
 ## ✅ Requirements
 
-- Minecraft **26.2**
-- Fabric Loader **0.19.3+**
+- Minecraft **26.3**
+- Fabric Loader **0.19.5+**
 - Fabric API
 
 ## 📄 License

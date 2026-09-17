@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.0
+- Updated for Minecraft 26.3.
+- Reworked the custom window icon to use SDL (Minecraft 26.3 replaced GLFW with SDL for windowing), matching vanilla's own icon-setting approach.
+- Requires exactly Minecraft 26.3.
+
 ## 1.2.1
 - Fixed the title screen icon row not re-centering around icons added by other mods (e.g. ukulib's config button), which left a foreign icon sticking out of the row.
 - The pause menu icon row now applies our buttons after other mods have added theirs, so the row stays correctly ordered and centered.

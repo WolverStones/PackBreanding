@@ -4,14 +4,14 @@ import cz.wolverstone.agonia.packbranding.PackBranding;
 import cz.wolverstone.agonia.packbranding.client.config.MenuConfig;
 import net.minecraft.client.Minecraft;
 import com.mojang.blaze3d.platform.NativeImage;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWImage;
-import org.lwjgl.system.MemoryStack;
-import org.lwjgl.system.MemoryUtil;
+import org.lwjgl.sdl.SDLSurface;
+import org.lwjgl.sdl.SDLVideo;
+import org.lwjgl.sdl.SDL_Surface;
+
+import static org.lwjgl.sdl.SDLPixels.SDL_PIXELFORMAT_ABGR8888;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -83,36 +83,53 @@ public final class WindowIconManager {
     }
 
     private static void setWindowIcon(List<IconSource> sources) throws IOException {
-        List<ByteBuffer> loadedImages = new ArrayList<>(sources.size());
+        List<NativeImage> loadedImages = new ArrayList<>(sources.size());
+        List<SDL_Surface> surfaces = new ArrayList<>(sources.size());
 
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            GLFWImage.Buffer glfwImages = GLFWImage.malloc(sources.size(), stack);
-
-            for (int i = 0; i < sources.size(); i++) {
-                IconSource source = sources.get(i);
-                try (InputStream stream = Files.newInputStream(source.path());
-                     NativeImage nativeImage = NativeImage.read(stream)) {
-                    if (source.expectedSize() != null) {
-                        int expected = source.expectedSize();
-                        if (nativeImage.getWidth() != expected || nativeImage.getHeight() != expected) {
-                            PackBranding.LOGGER.warn("Custom window icon enabled, but {} is not {}x{}.", source.path(), expected, expected);
-                            return;
-                        }
-                    }
-
-                    ByteBuffer buffer = MemoryUtil.memAlloc(nativeImage.getWidth() * nativeImage.getHeight() * 4);
-                    loadedImages.add(buffer);
-                    buffer.asIntBuffer().put(nativeImage.getPixelsABGR());
-                    glfwImages.position(i);
-                    glfwImages.width(nativeImage.getWidth());
-                    glfwImages.height(nativeImage.getHeight());
-                    glfwImages.pixels(buffer);
+        try {
+            for (IconSource source : sources) {
+                NativeImage nativeImage = readImage(source);
+                if (nativeImage == null) {
+                    return;
                 }
+                loadedImages.add(nativeImage);
+
+                SDL_Surface surface = SDLSurface.SDL_CreateSurfaceFrom(
+                        nativeImage.getWidth(), nativeImage.getHeight(), SDL_PIXELFORMAT_ABGR8888,
+                        nativeImage.getPixelBytes(), nativeImage.getWidth() * 4);
+                if (surface == null) {
+                    PackBranding.LOGGER.warn("Failed to create SDL surface for icon: {}", source.path());
+                    return;
+                }
+                surfaces.add(surface);
             }
 
-            GLFW.glfwSetWindowIcon(Minecraft.getInstance().getWindow().handle(), glfwImages);
+            SDL_Surface primary = surfaces.get(0);
+            for (int i = 1; i < surfaces.size(); i++) {
+                SDLSurface.SDL_AddSurfaceAlternateImage(primary, surfaces.get(i));
+            }
+
+            if (!SDLVideo.SDL_SetWindowIcon(Minecraft.getInstance().getWindow().handle(), primary)) {
+                PackBranding.LOGGER.warn("Failed to set window icon");
+            }
         } finally {
-            loadedImages.forEach(MemoryUtil::memFree);
+            surfaces.forEach(SDLSurface::SDL_DestroySurface);
+            loadedImages.forEach(NativeImage::close);
+        }
+    }
+
+    private static NativeImage readImage(IconSource source) throws IOException {
+        try (InputStream stream = Files.newInputStream(source.path())) {
+            NativeImage nativeImage = NativeImage.read(stream);
+            if (source.expectedSize() != null) {
+                int expected = source.expectedSize();
+                if (nativeImage.getWidth() != expected || nativeImage.getHeight() != expected) {
+                    PackBranding.LOGGER.warn("Custom window icon enabled, but {} is not {}x{}.", source.path(), expected, expected);
+                    nativeImage.close();
+                    return null;
+                }
+            }
+            return nativeImage;
         }
     }
 

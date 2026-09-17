@@ -120,8 +120,8 @@ A button can set `"index"` to place it at an exact spot in the icon row (`0` = f
 
 ## Requirements
 
-- Minecraft 26.2
-- Fabric Loader 0.19.3+
+- Minecraft 26.3
+- Fabric Loader 0.19.5+
 - Fabric API
 
 ## License
